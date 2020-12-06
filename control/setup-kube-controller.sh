@@ -50,6 +50,7 @@ case $distro in
   
   "fedora")
     . $(dirname "$0")/fedora.sh
+    fedora_install
     ;;
   
   "centos")

@@ -21,8 +21,12 @@ debian_install(){
   sudo runuser -l root -c "echo 'net.bridge.bridge-nf-call-iptables = 1' > /etc/sysctl.d/99-kubernetes-cri.conf"
   sudo runuser -l root -c "echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.d/99-kubernetes-cri.conf"
   sudo runuser -l root -c "echo 'net.bridge.bridge-nf-call-ip6tables = 1' >> /etc/sysctl.d/99-kubernetes-cri.conf"
+  
+  # Load Modules
   sudo modprobe overlay
   sudo modprobe br_netfilter
+  sudo runuser -l root -c "echo 'overlay' > /etc/modules-load.d/crio-net.conf"
+  sudo runuser -l root -c "echo 'br_netfilter' >> /etc/modules-load.d/crio-net.conf"
   sudo sysctl --system
 
   #####################################
