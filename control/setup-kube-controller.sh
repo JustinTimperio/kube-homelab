@@ -12,13 +12,16 @@ print_header(){
 # Generic Sys Setup
 #######################
 
+# Disable Swap
 echo 'Disabling SWAP...'
 sudo swapoff -a
 sudo sed -e'/swap/s/^#*/#/g' -i /etc/fstab
 
+# Change Hostname
 echo 'Changing Hostname...'
 hostname=`cat /etc/hostname`
-c_name=`kcontrol-"$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1 | cut -c1-6)"`
+c_id=`cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1 | cut -c1-6`
+c_name="kcontrol-$c_id"
 sudo hostname $c_name
 sudo sed -i "s/$hostname/$c_name/g" /etc/hostname
 sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
@@ -28,24 +31,20 @@ sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
 # Distro Spesific Setup
 ########################
 
-case $(awk -F'[= ]' '/^NAME=/{ gsub(/"/,""); print tolower($2)}' /etc/os-release) in
+distro=$(awk -F'[= ]' '/^NAME=/{ gsub(/"/,""); print tolower($2)}' /etc/os-release)
 
-  ##########################
-  # Arch Based Systems
-  #######################
-  
+case $distro in
   "arch")
     echo 'NOT SUPPORTED YET!'
     exit 1
     ;;
   
   ##########################
-  # Deb Based Systems
+  # Debian Based Systems
   #######################
 
   "debian")
-    source debian.sh
-    debian_install
+    . $(dirname "$0")/debian.sh
     ;;
 
   "ubuntu")
@@ -56,8 +55,7 @@ case $(awk -F'[= ]' '/^NAME=/{ gsub(/"/,""); print tolower($2)}' /etc/os-release
   #######################
   
   "fedora")
-    source fedora.sh
-    fedora_install
+    . $(dirname "$0")/fedora.sh
     ;;
   
   "centos")
@@ -90,7 +88,6 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-exit
 # Create Pod Network
 echo 'Adding Flannel Network for Pod Communication...'
 kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
