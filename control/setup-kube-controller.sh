@@ -79,11 +79,11 @@ esac
 ######################
 
 ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-subnet='10.244.0.0/16'
+subnet='10.244.10.0/16'
 
 print_header 'Configuring Kubernetes...'
 sudo kubeadm config images pull
-sudo kubeadm init --apiserver-advertise-address=$ip4
+sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet
 
 echo 'STOP NOT DONE YET'
 exit
@@ -93,8 +93,12 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Create Pod Network
-echo 'Adding Calico Network for Pod Communication...'
-kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
+echo 'Adding Flannel Network for Pod Communication...'
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+# Create Pod Network
+# echo 'Adding Calico Network for Pod Communication...'
+# kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
 
 echo ''
 echo ''
