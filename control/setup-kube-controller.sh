@@ -83,14 +83,17 @@ subnet='10.244.0.0/16'
 
 print_header 'Configuring Kubernetes...'
 sudo kubeadm config images pull
-sudo kubeadm init --pod-network-cidr=$subnet --apiserver-advertise-address=$ip4
+sudo kubeadm init --apiserver-advertise-address=$ip4
+
+echo 'STOP NOT DONE YET'
+exit
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Create Pod Network
-echo 'Adding Flannel Network for Pod Communication...'
+echo 'Adding Calico Network for Pod Communication...'
 kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
 
 echo ''

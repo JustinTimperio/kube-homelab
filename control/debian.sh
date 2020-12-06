@@ -33,6 +33,8 @@ debian_install(){
   sudo apt install -y cri-o-1.15 containernetworking-plugins
   sudo sed -i 's/\/usr\/libexec\/crio\/conmon/\/usr\/bin\/conmon/g' /etc/crio/crio.conf
   sudo curl -s https://raw.githubusercontent.com/projectatomic/registries/master/registries.fedora -o /etc/containers/registries.conf
+  sudo systemctl enable crio
+  sudo systemctl start crio
 
 
   # Install Kube
