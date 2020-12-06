@@ -1,12 +1,5 @@
 #!/usr/bin/env sh
 
-print_header(){
-  echo ''
-  echo '-------------------------------------------------------'
-  echo "$1"
-  echo '-------------------------------------------------------'
-  echo ''
-}
 
 ##########################
 # Generic Sys Setup
@@ -52,7 +45,7 @@ case $distro in
     ;;
   
   ##########################
-  # RPM Based Systems
+  # RHL Based Systems
   #######################
   
   "fedora")
@@ -61,12 +54,21 @@ case $distro in
   
   "centos")
     echo 'CENTOS IS NOT SUPPORTED!'
-    echo 'Unfortunately, if you CentOS you won’t be able to run any pods which depend on other pods (like a db-backend).'
+    echo 'Unfortunately, CentOS won’t be able to run any pods which depend on other pods (like a db-backend).'
     echo 'The networking of k8s depends on iptables which is not compatible with CentOS/Redhat.'
     exit 1
     ;;
+  
+  ##########################
+  # SUSE Based Systems
+  #######################
 
-  "opensuse tumbleweed"|"opensuse leap")
+  "opensuse tumbleweed")
+    echo 'NOT SUPPORTED YET!'
+    exit 1
+    ;;
+
+  "opensuse leap")
     echo 'NOT SUPPORTED YET!'
     exit 1
     ;;
@@ -83,10 +85,7 @@ subnet='10.244.10.0/16'
 
 print_header 'Configuring Kubernetes...'
 sudo kubeadm config images pull
-sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet
-
-echo 'STOP NOT DONE YET'
-exit
+sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -96,9 +95,6 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 echo 'Adding Flannel Network for Pod Communication...'
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
-# Create Pod Network
-# echo 'Adding Calico Network for Pod Communication...'
-# kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
 
 echo ''
 echo ''
