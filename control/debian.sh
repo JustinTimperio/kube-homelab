@@ -31,8 +31,8 @@ debian_install(){
   sudo runuser -l root -c "echo 'deb-src http://ppa.launchpad.net/projectatomic/ppa/ubuntu bionic main' >> /etc/apt/sources.list.d/projectatomics.list"
   sudo apt update
   sudo apt install -y cri-o-1.15 containernetworking-plugins
-  sudo sed 's/\/usr\/libexec\/crio\/conmon/\/usr\/bin\/conmon/g' /etc/crio/crio.conf
-  sudo curl https://raw.githubusercontent.com/projectatomic/registries/master/registries.fedora -o /etc/containers/registries.conf
+  sudo sed -i 's/\/usr\/libexec\/crio\/conmon/\/usr\/bin\/conmon/g' /etc/crio/crio.conf
+  sudo curl -s https://raw.githubusercontent.com/projectatomic/registries/master/registries.fedora -o /etc/containers/registries.conf
 
 
   # Install Kube

@@ -22,10 +22,10 @@ echo 'Changing Hostname...'
 hostname=`cat /etc/hostname`
 c_id=`cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1 | cut -c1-6`
 c_name="kcontrol-$c_id"
+
+sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
 sudo hostname $c_name
 sudo sed -i "s/$hostname/$c_name/g" /etc/hostname
-sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
-
 
 ##########################
 # Distro Spesific Setup
@@ -45,6 +45,7 @@ case $distro in
 
   "debian")
     . $(dirname "$0")/debian.sh
+    debian_install
     ;;
 
   "ubuntu")
