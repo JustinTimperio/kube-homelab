@@ -9,6 +9,7 @@ print_header(){
 }
 
 debian_install(){
+
   #####################################
   print_header 'Starting OS Prep...'
   ##################################
@@ -28,6 +29,7 @@ debian_install(){
   sudo runuser -l root -c "echo 'overlay' > /etc/modules-load.d/crio-net.conf"
   sudo runuser -l root -c "echo 'br_netfilter' >> /etc/modules-load.d/crio-net.conf"
   sudo sysctl --system
+
 
   #####################################
   print_header 'Installing CRI-O...'
@@ -65,4 +67,25 @@ debian_install(){
   sudo systemctl daemon-reload
   sudo systemctl start kubelet
   sudo systemctl enable kubelet
+
+
+  #####################################
+  print_header 'Configuring Kubernetes...'
+  ##################################
+
+  ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+  subnet='10.244.0.0/16'
+
+  sudo kubeadm config images pull
+  sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  # Create Pod Network
+  echo 'Adding Calico Network for Pod Communication...'
+  kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  # echo 'Adding Flannel Network for Pod Communication...'
+  # kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 }

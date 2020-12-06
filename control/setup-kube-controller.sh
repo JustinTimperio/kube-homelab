@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-
 ##########################
 # Generic Sys Setup
 #######################
@@ -19,6 +18,7 @@ c_name="kcontrol-$c_id"
 sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
 sudo hostname $c_name
 sudo sed -i "s/$hostname/$c_name/g" /etc/hostname
+
 
 ##########################
 # Distro Spesific Setup
@@ -75,27 +75,6 @@ case $distro in
     ;;
 
 esac
-
-
-#########################
-# Setup Cluster
-######################
-
-ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-subnet='10.244.10.0/16'
-
-print_header 'Configuring Kubernetes...'
-sudo kubeadm config images pull
-sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
-
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-# Create Pod Network
-echo 'Adding Flannel Network for Pod Communication...'
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
 
 echo ''
 echo ''
