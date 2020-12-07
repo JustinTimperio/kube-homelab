@@ -27,7 +27,7 @@ fedora_install(){
   
   echo 'Updating System...'
   sudo yum -y update
-  sudo dnf -y install dnf-plugins-core
+  sudo dnf -y install dnf-plugins-core iptables
 
 
   #####################################
@@ -41,8 +41,8 @@ fedora_install(){
 
   # Add CRI-O Conf For Kube
   sudo runuser -l root -c "echo 'net.bridge.bridge-nf-call-iptables = 1' > /etc/sysctl.d/99-kubernetes-cri.conf"
-  sudo runuser -l root -c "echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.d/99-kubernetes-cri.conf"
   sudo runuser -l root -c "echo 'net.bridge.bridge-nf-call-ip6tables = 1' >> /etc/sysctl.d/99-kubernetes-cri.conf"
+  sudo runuser -l root -c "echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.d/99-kubernetes-cri.conf"
 
   # Load Modules
   sudo modprobe overlay

@@ -88,4 +88,5 @@ debian_install(){
   kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
   # echo 'Adding Flannel Network for Pod Communication...'
   # kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
 }

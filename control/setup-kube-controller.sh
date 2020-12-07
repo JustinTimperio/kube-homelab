@@ -81,5 +81,15 @@ echo ''
 echo '================================='
 echo '  Ready to Attach Worker Nodes!  '
 echo '================================='
+echo ''
+sudo kubectl get nodes
+echo ''
+echo '===================='
+echo ''
+sudo kubectl get pods --all-namespaces
+echo ''
+echo '===================='
+echo ''
 sudo kubeadm token create --print-join-command
 echo ''
+echo '===================='
