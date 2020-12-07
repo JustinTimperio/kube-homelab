@@ -77,7 +77,8 @@ debian_install(){
   subnet='10.244.0.0/16'
 
   sudo kubeadm config images pull
-  sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
+  # sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
+  sudo kubeadm init --cri-socket=/var/run/crio/crio.sock
 
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -86,7 +87,5 @@ debian_install(){
   # Create Pod Network
   echo 'Adding Calico Network for Pod Communication...'
   kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-  # echo 'Adding Flannel Network for Pod Communication...'
-  # kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 }

@@ -74,4 +74,23 @@ fedora_install(){
   sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
   sudo systemctl start kubelet
   sudo systemctl enable kubelet
+  
+
+  #####################################
+  print_header 'Configuring Kubernetes...'
+  ##################################
+
+  ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+  subnet='10.244.0.0/16'
+
+  sudo kubeadm config images pull
+  sudo kubeadm init --cri-socket=/var/run/crio/crio.sock
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  # Create Pod Network
+  echo 'Adding Calico Network for Pod Communication...'
+  kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 }
