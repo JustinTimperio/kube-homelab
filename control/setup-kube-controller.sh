@@ -15,9 +15,10 @@ hostname=`cat /etc/hostname`
 c_id=`cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1 | cut -c1-6`
 c_name="kcontrol-$c_id"
 
-sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
-sudo hostname $c_name
-sudo sed -i "s/$hostname/$c_name/g" /etc/hostname
+# sudo sed -i "s/$hostname/$c_name/g" /etc/hosts
+# sudo hostname $c_name
+# sudo hostnamectl set-hostname $c_name
+# sudo sed -i "s/$hostname/$c_name/g" /etc/hostname
 
 
 ##########################
@@ -82,14 +83,14 @@ echo '================================='
 echo '  Ready to Attach Worker Nodes!  '
 echo '================================='
 echo ''
-sudo kubectl get nodes
+kubectl get nodes
 echo ''
 echo '===================='
 echo ''
-sudo kubectl get pods --all-namespaces
+kubectl get pods --all-namespaces
 echo ''
 echo '===================='
 echo ''
-sudo kubeadm token create --print-join-command
+kubeadm token create --print-join-command
 echo ''
 echo '===================='

@@ -78,7 +78,10 @@ debian_install(){
 
   sudo kubeadm config images pull
   # sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
-  sudo kubeadm init --cri-socket=/var/run/crio/crio.sock
+  sudo kubeadm init --cri-socket=/var/run/crio/crio.sock \
+    --kube-reserved-cgroup=kubeletreserved.slice \
+    --runtime-cgroups=/kubeletreserved.slice/kubeletreserved-runtime.slice \
+    --kubelet-cgroups=/kubeletreserved.slice/kubeletreserved-kubelet.slice
 
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
