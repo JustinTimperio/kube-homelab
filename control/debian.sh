@@ -73,15 +73,17 @@ debian_install(){
   print_header 'Configuring Kubernetes...'
   ##################################
 
-  ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-  subnet='10.244.0.0/16'
+  # ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+  # subnet='10.244.0.0/16'
+  # sudo kubeadm init --apiserver-advertise-address=$ip4 \
+                    # --pod-network-cidr=$subnet \
+                    # --cri-socket=/var/run/crio/crio.sock
 
   sudo kubeadm config images pull
-  # sudo kubeadm init --apiserver-advertise-address=$ip4 --pod-network-cidr=$subnet --cri-socket=/var/run/crio/crio.sock
   sudo kubeadm init --cri-socket=/var/run/crio/crio.sock \
-    --kube-reserved-cgroup=kubeletreserved.slice \
-    --runtime-cgroups=/kubeletreserved.slice/kubeletreserved-runtime.slice \
-    --kubelet-cgroups=/kubeletreserved.slice/kubeletreserved-kubelet.slice
+                    --kube-reserved-cgroup=kubeletreserved.slice \
+                    --runtime-cgroups=/kubeletreserved.slice/kubeletreserved-runtime.slice \
+                    --kubelet-cgroups=/kubeletreserved.slice/kubeletreserved-kubelet.slice
 
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
