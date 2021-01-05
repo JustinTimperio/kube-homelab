@@ -77,6 +77,8 @@ case $distro in
 
 esac
 
+echo 'Waiting for Cluster to Start...'
+sleep 30
 echo ''
 echo ''
 echo '================================='
